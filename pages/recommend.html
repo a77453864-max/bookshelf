@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 추천 테스트 - BookShelf</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">📚 BookShelf</a>
+      <button class="hamburger" id="hamburger">&#9776;</button>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="../index.html">홈</a></li>
+        <li><a href="search.html">책 검색</a></li>
+        <li><a href="mylibrary.html">내 서재</a></li>
+        <li><a href="recommend.html" class="active">추천 테스트</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="test-container">
+    <h2 class="section-title" style="text-align:center; margin-bottom:8px">📖 나에게 맞는 책은?</h2>
+    <p style="text-align:center; color:var(--text-muted); margin-bottom:32px; font-size:15px">5가지 질문으로 딱 맞는 장르를 찾아드려요!</p>
+    <div class="test-progress">
+      <div class="test-progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div id="test-area"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 BookShelf | 도서 데이터: 카카오 도서 API</p>
+    </div>
+  </footer>
+
+  <script src="../js/common.js"></script>
+  <script>
+    const questions = [
+      {
+        q: "주말 오후, 나는 보통 어디에 있을까?",
+        options: [
+          { text: "🏠 집에서 넷플릭스 정주행",       scores: { fiction: 2, art: 2 } },
+          { text: "📚 카페에서 조용히 독서",          scores: { selfhelp: 2, philosophy: 2 } },
+          { text: "🏃 밖에서 운동하거나 활동적으로",  scores: { science: 2, selfhelp: 1 } },
+          { text: "💻 집에서 코딩이나 게임",          scores: { computer: 2, science: 1 } }
+        ]
+      },
+      {
+        q: "책을 읽을 때 가장 원하는 것은?",
+        options: [
+          { text: "😭 감동받고 눈물 흘리고 싶다",   scores: { fiction: 3, art: 2 } },
+          { text: "🧠 새로운 지식을 얻고 싶다",     scores: { science: 2, history: 2 } },
+          { text: "💪 동기부여가 되고 싶다",        scores: { selfhelp: 3, economy: 1 } },
+          { text: "💰 돈과 경제를 이해하고 싶다",   scores: { economy: 3, selfhelp: 1 } }
+        ]
+      },
+      {
+        q: "요즘 내 고민은?",
+        options: [
+          { text: "💸 돈을 어떻게 잘 관리하지?",    scores: { economy: 3, selfhelp: 1 } },
+          { text: "🤔 인생의 의미가 뭘까?",         scores: { philosophy: 3, fiction: 1 } },
+          { text: "💻 개발 실력을 키우고 싶어",      scores: { computer: 3, science: 1 } },
+          { text: "🌍 세상에 대해 더 알고 싶어",    scores: { history: 2, philosophy: 2 } }
+        ]
+      },
+      {
+        q: "가장 즐겨보는 콘텐츠는?",
+        options: [
+          { text: "🎬 드라마/영화",               scores: { fiction: 2, art: 2 } },
+          { text: "📺 다큐멘터리/역사 콘텐츠",     scores: { history: 2, science: 1 } },
+          { text: "📱 IT/테크 유튜브",            scores: { computer: 2, science: 1 } },
+          { text: "🎙️ 자기계발/경제 팟캐스트",    scores: { selfhelp: 2, economy: 1 } }
+        ]
+      },
+      {
+        q: "나와 가장 가까운 모습은?",
+        options: [
+          { text: "🎨 그림, 음악 등 예술에 관심 많음", scores: { art: 3, philosophy: 1 } },
+          { text: "📊 숫자와 데이터 분석을 좋아함",    scores: { economy: 2, computer: 2 } },
+          { text: "🔬 과학적 원리가 궁금함",           scores: { science: 3, history: 1 } },
+          { text: "📖 역사와 사회 현상에 관심 많음",   scores: { history: 3, philosophy: 2 } }
+        ]
+      }
+    ];
+
+    const genreBooks = {
+      fiction:    ["아몬드", "불편한 편의점", "채식주의자", "나미야 잡화점의 기적", "아버지의 해방일지", "오늘 밤 세계에서 이 사랑이 사라진다 해도"],
+      selfhelp:   ["아주 작은 습관의 힘", "역행자", "미라클 모닝", "원씽", "그릿", "하루 1%의 기적"],
+      economy:    ["돈의 심리학", "부의 추월차선", "사장학개론", "불변의 법칙", "부자 아빠 가난한 아빠", "넛지"],
+      science:    ["사피엔스", "코스모스", "이기적 유전자", "총균쇠", "파인만의 여섯 가지 물리 이야기", "빅뱅 우주론 강의"],
+      history:    ["총균쇠", "한국사 편지", "로마인 이야기", "설민석의 조선왕조실록", "사피엔스", "역사란 무엇인가"],
+      computer:   ["클린코드", "이것이 자바다", "혼자 공부하는 파이썬", "컴퓨터 사이언스 부트캠프", "알고리즘 도감", "개발자의 글쓰기"],
+      art:        ["서양미술사", "음악의 기쁨", "사진의 이해", "색채심리", "예술수업", "나는 메트로폴리탄 미술관의 경비원입니다"],
+      philosophy: ["소크라테스의 변명", "니체의 말", "미움받을 용기", "철학은 어떻게 삶의 무기가 되는가", "죽음이란 무엇인가", "정의란 무엇인가"]
+    };
+
+    const genreInfo = {
+      fiction:    { name: '소설',      emoji: '📖', desc: '감동적인 이야기와 다양한 인물들의 삶을 통해 공감과 위로를 얻을 수 있어요. 세계 명작부터 국내 소설까지 폭넓게 탐독해보세요!' },
+      selfhelp:   { name: '자기계발',  emoji: '🚀', desc: '더 나은 내가 되고 싶다면 자기계발서가 딱! 성공한 사람들의 인사이트와 실용적인 조언이 가득해요.' },
+      economy:    { name: '경제/경영', emoji: '💼', desc: '돈의 흐름을 이해하고 현명한 선택을 하고 싶다면! 재테크부터 비즈니스 전략까지 폭넓게 다뤄요.' },
+      science:    { name: '과학',      emoji: '🔬', desc: '우주, 생물, 물리... 세상의 원리가 궁금하다면 과학책이 최고예요. 어렵지 않게 풀어쓴 대중 과학서를 추천해요!' },
+      history:    { name: '역사',      emoji: '🏛️', desc: '과거를 알면 현재가 보여요. 역사책은 단순한 사실의 나열이 아니라 인간과 사회를 이해하는 렌즈랍니다.' },
+      computer:   { name: '컴퓨터',    emoji: '💻', desc: 'IT, 프로그래밍, 인공지능까지! 디지털 시대를 살아가는 데 필요한 지식을 쌓아보세요.' },
+      art:        { name: '예술',      emoji: '🎨', desc: '미술, 음악, 영화... 예술은 삶을 풍요롭게 만들어줘요. 예술을 더 깊이 이해하고 즐기고 싶다면!' },
+      philosophy: { name: '철학',      emoji: '🤔', desc: '삶의 근본적인 질문에 도전해보세요. 철학은 어렵지 않아요, 우리 모두가 이미 철학자랍니다!' }
+    };
+
+    const medals = ['🥇', '🥈', '🥉'];
+    let currentQ = 0;
+    let scores = {};
+
+    function initScores() {
+      Object.keys(genreInfo).forEach(k => scores[k] = 0);
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      $('#progress-bar').css('width', (currentQ / questions.length * 100).toFixed(0) + '%');
+      $('#test-area').html(`
+        <div class="test-question">
+          <div class="question-number">Q${currentQ + 1} / ${questions.length}</div>
+          <p class="question-text">${q.q}</p>
+        </div>
+        <div class="test-options">
+          ${q.options.map((opt, i) => `
+            <button class="test-option" onclick="selectOption(${i})">${opt.text}</button>
+          `).join('')}
+        </div>
+      `);
+    }
+
+    function selectOption(idx) {
+      const opt = questions[currentQ].options[idx];
+      Object.entries(opt.scores).forEach(([genre, val]) => {
+        scores[genre] = (scores[genre] || 0) + val;
+      });
+      $('.test-option').eq(idx).addClass('selected');
+      setTimeout(() => {
+        currentQ++;
+        if (currentQ < questions.length) {
+          renderQuestion();
+        } else {
+          showResult();
+        }
+      }, 300);
+    }
+
+    async function showResult() {
+      $('#progress-bar').css('width', '100%');
+      const sorted = Object.entries(scores).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+      const topGenre = sorted[0][0];
+      const info = genreInfo[topGenre];
+      const books = genreBooks[topGenre];
+      const top3 = sorted.slice(0, 3);
+
+      const rankHtml = top3.map(([genre, score], i) => `
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; background:var(--bg-light); border-radius:var(--radius-sm); margin-bottom:8px;">
+          <span style="font-size:20px">${medals[i]}</span>
+          <span style="font-weight:600; color:var(--text)">${genreInfo[genre].emoji} ${genreInfo[genre].name}</span>
+          <span style="margin-left:auto; font-weight:700; color:var(--primary)">${score}점</span>
+        </div>
+      `).join('');
+
+      $('#test-area').html(`
+        <div class="test-result">
+          <div class="result-emoji">${info.emoji}</div>
+          <div class="result-genre">${info.name}형 독자</div>
+          <p class="result-desc">${info.desc}</p>
+          <div style="text-align:left; margin-bottom:28px;">
+            <h3 style="font-size:16px; font-weight:700; margin-bottom:12px;">📊 나의 독서 성향 분석</h3>
+            ${rankHtml}
+          </div>
+          <div class="result-books">
+            <h3>추천 도서 🎯</h3>
+            <div class="book-grid" id="result-books-grid">
+              <div class="loading">추천 도서를 찾는 중...</div>
+            </div>
+          </div>
+          <button class="btn btn-outline" onclick="resetTest()" style="margin-top:28px">다시 테스트하기 🔄</button>
+        </div>
+      `);
+
+      const results = [];
+      for (const title of books) {
+        const data = await searchBooks(title, 1, 1);
+        if (data && data.documents.length > 0) results.push(data.documents[0]);
+      }
+      if (results.length > 0) {
+        $('#result-books-grid').html(results.map(createBookCard).join(''));
+      } else {
+        $('#result-books-grid').html('<p class="loading">추천 도서를 불러올 수 없어요.</p>');
+      }
+    }
+
+    function resetTest() {
+      currentQ = 0;
+      initScores();
+      renderQuestion();
+    }
+
+    initScores();
+    renderQuestion();
+  </script>
+</body>
+</html>

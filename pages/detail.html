@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 상세 - BookShelf</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">📚 BookShelf</a>
+      <button class="hamburger" id="hamburger">&#9776;</button>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="../index.html">홈</a></li>
+        <li><a href="search.html">책 검색</a></li>
+        <li><a href="mylibrary.html">내 서재</a></li>
+        <li><a href="recommend.html">추천 테스트</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="detail-section">
+    <div class="container">
+      <button onclick="history.back()" class="btn btn-outline" style="margin-bottom:24px">← 뒤로가기</button>
+      <div id="detail-content"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 BookShelf | 도서 데이터: 카카오 도서 API</p>
+    </div>
+  </footer>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/detail.js"></script>
+</body>
+</html>
