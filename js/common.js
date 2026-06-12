@@ -4,7 +4,7 @@ async function searchBooks(query, page = 1, size = 12, sort = 'accuracy') {
   const url = `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}&page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await fetch(url, {
-      headers: { 'Authorization': `KakaoAK ${KAKAO_API_KEY}` }
+      headers: { 'Authorization': 'KakaoAK ${KAKAO_API_KEY}' }
     });
     if (!response.ok) throw new Error('API 요청 실패');
     return await response.json();
