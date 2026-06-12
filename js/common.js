@@ -1,4 +1,4 @@
-const KAKAO_API_KEY = '여기에_API_키_입력';
+const KAKAO_API_KEY = '45ca65c7b02629e32de56a1e73512d93';
 
 async function searchBooks(query, page = 1, size = 12, sort = 'accuracy') {
   const url = `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}&page=${page}&size=${size}&sort=${sort}`;
